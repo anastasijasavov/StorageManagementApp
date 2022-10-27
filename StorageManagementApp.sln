@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageManagementApp", "StorageManagementApp\StorageManagementApp.csproj", "{74457F44-119A-49D4-9EC0-EE5CA0C6D26E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageManagementApp.Mvc", "StorageManagementApp\StorageManagementApp.Mvc.csproj", "{74457F44-119A-49D4-9EC0-EE5CA0C6D26E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageManagementApp.Contracts", "StorageManagementApp.Contracts\StorageManagementApp.Contracts.csproj", "{1051E836-B379-4765-B6F2-B4ACEE90D0B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{74457F44-119A-49D4-9EC0-EE5CA0C6D26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74457F44-119A-49D4-9EC0-EE5CA0C6D26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74457F44-119A-49D4-9EC0-EE5CA0C6D26E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1051E836-B379-4765-B6F2-B4ACEE90D0B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1051E836-B379-4765-B6F2-B4ACEE90D0B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1051E836-B379-4765-B6F2-B4ACEE90D0B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1051E836-B379-4765-B6F2-B4ACEE90D0B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

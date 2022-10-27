@@ -22,24 +22,36 @@ namespace StorageManagementApp
         {
             base.OnModelCreating(builder);
 
+            //add computed value for product code
+            builder.Entity<Product>()
+                .Property(p => p.Code)
+                .HasComputedColumnSql("[CategoryId] + '-' + [Id]", stored: true);
+
+            builder.Entity<Product>()
+                .HasKey(x => x.Id);
             //seed
             builder.Entity<User>().ToTable("Users").HasData(
-                new User
+                new List<User>
                 {
-                    Id = new Guid(),
-                    Email = "anastasija.savov2000@gmail.com",
-                    Password = "anastasija123",
-                    NormalizedUserName = "ANASTASIJA.SAVOV2000@GMAIL.COM",
-                    UserName = "anastasija",
-                    PasswordHash = ""
+                    new User
+                    {
+                        Id = 1,
+                        Email = "anastasija.savov2000@gmail.com",
+                        Password = "anastasija123",
+                        NormalizedUserName = "ANASTASIJA.SAVOV2000@GMAIL.COM",
+                        UserName = "anastasija",
+                        PasswordHash = "$2a$12$y6USyih2RFHFv6GEWgjUt.PA8DxUbPD.BLqe7w9/A3oW.tLt0yDWq"
+                    }
                 }
             );
 
             builder.Entity<Category>().ToTable("Categories").HasData(
-                new Category { Id = 1, Name = "Food" },
-                new Category { Id = 2, Name = "Office materials" },
-                new Category { Id = 3, Name = "Tools" }
-                );
+                new List<Category>
+                {
+                    new Category { Id = 1, Name = "Food" },
+                    new Category { Id = 2, Name = "Office materials" },
+                    new Category { Id = 3, Name = "Tools" }
+                });
 
             builder.Entity<Product>().ToTable("Products");
         }

@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace StorageManagementApp.Migrations
+namespace StorageManagementApp.Mvc.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialWithSeed : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +14,7 @@ namespace StorageManagementApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,7 +25,8 @@ namespace StorageManagementApp.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -50,8 +50,8 @@ namespace StorageManagementApp.Migrations
                     RetailPrice = table.Column<float>(type: "real", nullable: false),
                     InStock = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false, computedColumnSql: "[CategoryId] + '-' + [Id]", stored: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,6 +63,21 @@ namespace StorageManagementApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Food" },
+                    { 2, "Office materials" },
+                    { 3, "Tools" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "NormalizedUserName", "Password", "PasswordHash", "UserName" },
+                values: new object[] { 1, "anastasija.savov2000@gmail.com", "ANASTASIJA.SAVOV2000@GMAIL.COM", "anastasija123", "$2a$12$y6USyih2RFHFv6GEWgjUt.PA8DxUbPD.BLqe7w9/A3oW.tLt0yDWq", "anastasija" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",

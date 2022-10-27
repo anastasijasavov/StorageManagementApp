@@ -7,9 +7,10 @@ namespace StorageManagementApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly StorageDBContext _storageDBContext;
+        public HomeController(StorageDBContext ctx, ILogger<HomeController> logger)
         {
+            _storageDBContext = ctx;
             _logger = logger;
         }
 

@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StorageManagementApp.Mvc.Services;
+using StorageManagementApp.Mvc.Services.Interfaces;
+using AutoMapper;
+using StorageManagementApp.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,17 @@ builder.Services.AddCors(options =>
         corsOptions.AllowAnyOrigin();
     });
 });
+builder.Services.AddScoped<StorageDBContext>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+//automapper injection
+var config = new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new AutoMapperProfile());
+});
+var mapper = config.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
