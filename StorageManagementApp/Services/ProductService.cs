@@ -55,6 +55,25 @@ namespace StorageManagementApp.Mvc.Services
             }
         }
 
+        public List<ProductViewDto> GetProducts()
+        {
+            try
+            {
+                var products = _ctx.Products.ToList();
+                if (products != null)
+                {
+                    List<ProductViewDto> dtoProducts = _mapper.Map<List<ProductViewDto>>(products);
+                    return dtoProducts;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null; // with message
+                throw;
+            }
+        }
+
         public bool UpdateProduct(ProductCreateDto product)
         {
             try

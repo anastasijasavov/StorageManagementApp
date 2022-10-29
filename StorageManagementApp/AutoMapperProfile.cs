@@ -9,8 +9,13 @@ namespace StorageManagementApp.Mvc
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserCreateDto>();
-            CreateMap<Product, ProductCreateDto>();
+            CreateMap<UserCreateDto, User>();
+            CreateMap<ProductCreateDto, Product>();
+
+            CreateMap<Product, ProductViewDto>()
+                .ForMember(x => x.CategoryName, 
+                           y => y.MapFrom(x => x.Category.Name));
+
 
         }
     }

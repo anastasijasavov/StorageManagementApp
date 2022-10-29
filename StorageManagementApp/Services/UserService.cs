@@ -13,6 +13,7 @@ namespace StorageManagementApp.Mvc.Services
         public UserService(StorageDBContext ctx, IMapper mapper)
         {
             _ctx = ctx;
+            _mapper = mapper;
         }
 
         public bool CreateUser(UserCreateDto user)

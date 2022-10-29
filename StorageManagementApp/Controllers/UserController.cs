@@ -1,40 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using StorageManagementApp.Contracts.DTOs.Product;
 using StorageManagementApp.Contracts.DTOs.User;
 using StorageManagementApp.Mvc.Services.Interfaces;
 
-namespace StorageManagementApp.Controllers
+namespace StorageManagementApp.Mvc.Controllers
 {
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IProductService _productService;
+        public UserController(IUserService userService, IProductService productService)
         {
             _userService = userService;
+            _productService = productService;
         }
-        // GET: UserController
-        public ActionResult Index()
+        public ActionResult Create()
         {
             return View();
         }
 
-        // GET: UserController/Create
         [HttpPost]
-        [Route("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(UserCreateDto user)
         {
             _userService.CreateUser(user);
-            return View();
+            return View("Index");
         }
 
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: UserController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(UserLoginDto userDTO)
@@ -44,7 +36,7 @@ namespace StorageManagementApp.Controllers
                 var result = _userService.Login(userDTO);
                 if (result)
                     return RedirectToAction(nameof(Index));
-                else return View();
+                else return View(); //with error message
             }
             catch
             {
@@ -52,26 +44,17 @@ namespace StorageManagementApp.Controllers
             }
         }
 
-        // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Login()
         {
-            _userService.Delete(id);
             return View();
         }
 
-        // POST: UserController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Index()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var productsDtos = _productService.GetProducts();
+            return View(productsDtos);
         }
+
+      
     }
 }

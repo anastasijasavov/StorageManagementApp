@@ -17,6 +17,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<StorageDBContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddCors(options =>
 {
     //TODO: see if MVC has it's own system of reading these from config
@@ -29,6 +31,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddScoped<StorageDBContext>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 //automapper injection
 var config = new MapperConfiguration(cfg =>
