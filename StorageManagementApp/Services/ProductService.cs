@@ -9,10 +9,12 @@ namespace StorageManagementApp.Mvc.Services
     {
         private readonly StorageDBContext _ctx;
         private readonly IMapper _mapper;
-        public ProductService(StorageDBContext ctx, IMapper mapper)
+        private readonly ILogger<ProductService>_logger;
+        public ProductService(StorageDBContext ctx, IMapper mapper, ILogger<ProductService> logger)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _logger = logger;
         }
         public bool AddProduct(ProductCreateDto product)
         {
@@ -60,7 +62,7 @@ namespace StorageManagementApp.Mvc.Services
             try
             {
                 var products = _ctx.Products.ToList();
-                if (products != null)
+                if (products?.Count > 0)
                 {
                     List<ProductViewDto> dtoProducts = _mapper.Map<List<ProductViewDto>>(products);
                     return dtoProducts;

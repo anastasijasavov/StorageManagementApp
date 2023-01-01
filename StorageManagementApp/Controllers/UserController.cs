@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StorageManagementApp.Contracts.DTOs.Product;
 using StorageManagementApp.Contracts.DTOs.User;
+using StorageManagementApp.Contracts.Guards;
 using StorageManagementApp.Mvc.Services.Interfaces;
 
 namespace StorageManagementApp.Mvc.Controllers
@@ -26,7 +27,11 @@ namespace StorageManagementApp.Mvc.Controllers
             _userService.CreateUser(user);
             return View("Index");
         }
-
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View(new UserLoginDto());
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(UserLoginDto userDTO)
@@ -35,8 +40,13 @@ namespace StorageManagementApp.Mvc.Controllers
             {
                 var result = _userService.Login(userDTO);
                 if (result)
+                {
                     return RedirectToAction(nameof(Index));
-                else return View(); //with error message
+                }
+                else {
+                    userDTO.ErrorMessage = "Wrong email and/or password. Try again.";
+                    return View(userDTO); //with error message
+                }
             }
             catch
             {
@@ -44,17 +54,15 @@ namespace StorageManagementApp.Mvc.Controllers
             }
         }
 
-        public ActionResult Login()
-        {
-            return View();
-        }
-
+        [PrivateGuard]
         public ActionResult Index()
         {
             var productsDtos = _productService.GetProducts();
-            return View(productsDtos);
+            if (productsDtos != null)
+                return View(productsDtos);
+            return View();
         }
 
-      
+
     }
 }

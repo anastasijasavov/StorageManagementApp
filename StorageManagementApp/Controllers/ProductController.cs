@@ -11,13 +11,25 @@ namespace StorageManagementApp.Mvc.Controllers
         {
             _productService = productService;
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new ProductCreateDto());
+        }
+
         [HttpPost]
         public IActionResult Create(ProductCreateDto product)
         {
             var res = _productService.AddProduct(product);
 
-            if (res) return View(); //with toast success
-            else return View(); //with error message
+            //reload page to update the list
+            if (res) return RedirectToAction("Index","User");
+            else
+            {
+                product.ErrorMessage = "Error adding the product. Try again.";
+                return View(product); //with error message
+            } 
         }
 
     }

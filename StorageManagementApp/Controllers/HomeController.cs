@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StorageManagementApp.Contracts.Guards;
 using StorageManagementApp.Models;
 using System.Diagnostics;
 
@@ -13,9 +14,13 @@ namespace StorageManagementApp.Controllers
             _storageDBContext = ctx;
             _logger = logger;
         }
-
+        //[PrivateGuard]
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "User");
+            }
             return View();
         }
 

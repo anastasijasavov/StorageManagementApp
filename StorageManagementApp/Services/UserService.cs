@@ -8,12 +8,14 @@ namespace StorageManagementApp.Mvc.Services
 {
     public class UserService : IUserService
     {
+        private ILogger<UserService> _logger;
         private readonly StorageDBContext _ctx;
         private readonly IMapper _mapper;
-        public UserService(StorageDBContext ctx, IMapper mapper)
+        public UserService(StorageDBContext ctx, IMapper mapper, ILogger<UserService> logger)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public bool CreateUser(UserCreateDto user)
@@ -29,11 +31,13 @@ namespace StorageManagementApp.Mvc.Services
 
                 _ctx.Users.Add(dbUser);
                 _ctx.SaveChanges();
+                _logger.LogInformation("Created user " + user.UserName);
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.Log(LogLevel.Error, e.Message);
                 return false;
                 throw;
             }
@@ -49,12 +53,19 @@ namespace StorageManagementApp.Mvc.Services
                 {
                     _ctx.Users.Remove(user);
                     _ctx.SaveChanges();
+                    _logger.LogInformation("Deleted user " + user.UserName);
                     return true;
+
                 }
-                return false;
+                else
+                {
+                    _logger.LogInformation("User not found for deletion.");
+                    return false;
+                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.Log(LogLevel.Error, e.Message);
                 return false;
                 throw;
             }
@@ -75,6 +86,7 @@ namespace StorageManagementApp.Mvc.Services
 
             if (result == PasswordVerificationResult.Success)
             {
+                _logger.LogInformation("Login successful for user " + dbuser?.UserName);
                 return true;
             }
             else if (result == PasswordVerificationResult.SuccessRehashNeeded)
@@ -82,11 +94,14 @@ namespace StorageManagementApp.Mvc.Services
                 try
                 {
                     dbuser.PasswordHash = HashPassword(dbuser.Password);
+                    _logger.LogInformation("Rehashing password for user " + dbuser.UserName);
+
                     _ctx.Update(dbuser);
                     _ctx.SaveChanges();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.Log(LogLevel.Error, e.Message);
                     return false;
                     throw;
                 }
