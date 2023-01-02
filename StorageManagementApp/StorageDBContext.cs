@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using StorageManagementApp.Models;
@@ -6,7 +7,7 @@ using System.Reflection.Emit;
 
 namespace StorageManagementApp
 {
-    public class StorageDBContext : DbContext
+    public class StorageDBContext : IdentityDbContext
     {
         private IConfiguration Configuration { get; set; }
         public StorageDBContext(DbContextOptions<StorageDBContext> options, IConfiguration configuration) : base(options)
@@ -24,14 +25,11 @@ namespace StorageManagementApp
         {
             base.OnModelCreating(builder);
 
-            //add computed value for product code
-            builder.Entity<Product>()
-                .Property(p => p.Code)
-                .HasComputedColumnSql("[CategoryId] + '-' + [Id]", stored: true);
+            builder.Entity<Product>().HasIndex(x => x.Code).IsUnique();
 
             builder.Entity<Product>()
                 .HasKey(x => x.Id);
-           
+
             builder.Entity<Category>().ToTable("Categories").HasData(
                 new List<Category>
                 {
@@ -39,7 +37,6 @@ namespace StorageManagementApp
                     new Category { Id = 2, Name = "Office materials" },
                     new Category { Id = 3, Name = "Tools" }
                 });
-            builder.Entity<IdentityUserClaim<string>>().HasKey(p => new { p.Id });
             builder.Entity<Product>().ToTable("Products");
         }
     }

@@ -10,10 +10,14 @@ namespace StorageManagementApp.Mvc
         public AutoMapperProfile()
         {
             CreateMap<UserCreateDto, User>();
-            CreateMap<ProductCreateDto, Product>();
+
+            CreateMap<ProductDto, Product>()
+            .ForMember(x => x.CategoryId, opt => opt.MapFrom(y => (int)y.CategoryId));
+
+            CreateMap<Product, ProductDto>();
 
             CreateMap<Product, ProductViewDto>()
-                .ForMember(x => x.CategoryName, 
+                .ForMember(x => x.CategoryName,
                            y => y.MapFrom(x => x.Category.Name));
 
 

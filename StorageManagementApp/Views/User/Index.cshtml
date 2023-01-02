@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_LoggedLayout.cshtml";
 }
 
-<button type="button" asp-action="Create" asp-controller="Product">Add product</button>
+@Html.ActionLink("Add product", "Create", "Product")
 <table class="table">
     <thead>
         <tr>
@@ -16,22 +16,22 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PurchasePrice)
+                @Html.DisplayName("Purchase price")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RetailPrice)
+                @Html.DisplayName("Retail price")
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Code)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.InStock)
+                @Html.DisplayName("In stock")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CategoryName)
+                @Html.DisplayName("Category")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImagePath)
+                @Html.DisplayName("Image")
             </th>
             <th></th>
         </tr>
@@ -55,17 +55,20 @@
                         @Html.DisplayFor(modelItem => item.RetailPrice)
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.Code)
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.InStock)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Code)
+                        @Html.DisplayFor(modelItem => item.CategoryName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ImagePath)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="Edit" asp-controller="Product" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="ShowConfirmDialog" asp-controller="Product" asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }

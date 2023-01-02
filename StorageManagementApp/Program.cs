@@ -22,7 +22,10 @@ builder.Host.ConfigureLogging(logging =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<StorageDBContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
+{
+    opt.EnableSensitiveDataLogging();
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("conn"));
+});
 
 builder.Services.AddDefaultIdentity<User>(opts =>
 {

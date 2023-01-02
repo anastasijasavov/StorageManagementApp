@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace StorageManagementApp.Contracts.DTOs.Product
 {
-    public class ProductCreateDto
+    public class ProductDto
     {
+        public int? Id { get; set; }
         [MaxLength(2000)]
         public string? Description { get; set; }
         public string Name { get; set; }

@@ -7,7 +7,6 @@ using StorageManagementApp.Mvc.Services.Interfaces;
 
 namespace StorageManagementApp.Mvc.Controllers
 {
-    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -17,13 +16,13 @@ namespace StorageManagementApp.Mvc.Controllers
             _userService = userService;
             _productService = productService;
         }
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserCreateDto user)
         {
@@ -38,12 +37,12 @@ namespace StorageManagementApp.Mvc.Controllers
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         public ActionResult Login()
         {
             return View(new UserLoginDto());
         }
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> Logout()
         {
             var res = await _userService.Logout();
@@ -54,7 +53,6 @@ namespace StorageManagementApp.Mvc.Controllers
             else return View();
         }
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(UserLoginDto userDTO)
         {
@@ -76,6 +74,7 @@ namespace StorageManagementApp.Mvc.Controllers
                 return View();
             }
         }
+        [Authorize]
         public ActionResult Index()
         {
             var productsDtos = _productService.GetProducts();

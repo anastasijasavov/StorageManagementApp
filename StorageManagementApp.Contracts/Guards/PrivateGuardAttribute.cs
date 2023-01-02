@@ -15,10 +15,10 @@ namespace StorageManagementApp.Contracts.Guards
         {
             if (!context.HttpContext.User?.Identity?.IsAuthenticated ?? false)
             {
-                context.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary(
-                        new { controller = "User", action = "Login" })
-                    );
+                //context.Result = new RedirectToRouteResult(
+                //    new RouteValueDictionary(
+                //        new { controller = "User", action = "Login" })
+                //    );
             }
             else
             {

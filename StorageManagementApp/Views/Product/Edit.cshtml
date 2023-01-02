@@ -1,8 +1,8 @@
-﻿@using StorageManagementApp.Contracts.Enums
+@using StorageManagementApp.Contracts.Enums
 @model StorageManagementApp.Contracts.DTOs.Product.ProductDto
 
 @{
-    ViewData["Title"] = "Add product";
+    ViewData["Title"] = "Edit product";
 }
 <hr />
 <div class="row">
@@ -47,7 +47,7 @@
                 <input asp-for="ImagePath" type="file" class="form-control" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Add" class="btn btn-primary" />
+                <input type="submit" asp-action="Edit" value="Edit" class="btn btn-primary" />
             </div>
         </form>
     </div>

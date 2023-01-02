@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StorageManagementApp.Contracts.DTOs;
 using StorageManagementApp.Contracts.DTOs.Product;
+using StorageManagementApp.Contracts.ExceptionHandler;
 using StorageManagementApp.Models;
 using StorageManagementApp.Mvc.Services.Interfaces;
 
@@ -17,7 +19,7 @@ namespace StorageManagementApp.Mvc.Services
             _mapper = mapper;
             _logger = logger;
         }
-        public bool AddProduct(ProductCreateDto product)
+        public bool AddProduct(ProductDto product)
         {
 
             Product dbProduct = _mapper.Map<Product>(product);
@@ -44,9 +46,17 @@ namespace StorageManagementApp.Mvc.Services
             return false;
         }
 
+        public ProductDto GetProductById(int id)
+        {
+            var product = _ctx.Products.Where(x => x.Id == id)
+                .AsNoTracking()
+                .FirstOrDefault();
+            return _mapper.Map<ProductDto>(product);
+        }
+
         public ResponseTemplateDto<List<ProductViewDto>> GetProducts()
         {
-            var products = _ctx.Products.ToList();
+            var products = _ctx.Products.Include(x => x.Category).AsNoTracking().ToList();
             if (products?.Count > 0)
             {
                 List<ProductViewDto> dtoProducts = _mapper.Map<List<ProductViewDto>>(products);
@@ -84,14 +94,22 @@ namespace StorageManagementApp.Mvc.Services
 
         }
 
-        public bool UpdateProduct(ProductCreateDto product)
+        public bool UpdateProduct(ProductDto product)
         {
 
-            var dbProduct = _mapper.Map<Product>(product);
-            _ctx.Products.Update(dbProduct);
-            _ctx.SaveChanges();
-            return true;
-
+            var dbProduct = _ctx.Products.FirstOrDefault(x => x.Id == product.Id);
+            if (dbProduct != null)
+            {
+                var updateProduct = _mapper.Map<Product>(product);
+                _ctx.Entry(dbProduct).CurrentValues.SetValues(updateProduct);
+                
+                _ctx.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
