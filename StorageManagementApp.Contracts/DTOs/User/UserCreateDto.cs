@@ -28,5 +28,7 @@ namespace StorageManagementApp.Contracts.DTOs.User
         public string Email { get; set; }
         [RegularExpression(@"^([0-9]{1,})(([\s.-]?)(\d{1,})){1,}$", ErrorMessage = "Invalid number format. Allowed characters: 0-9, - and space")]
         public string? PhoneNumber { get; set; }
+
+        public string? ErrorMessage { get; set; }
     }
 }

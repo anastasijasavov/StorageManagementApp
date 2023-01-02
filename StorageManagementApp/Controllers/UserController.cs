@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StorageManagementApp.Contracts.DTOs.Product;
 using StorageManagementApp.Contracts.DTOs.User;
 using StorageManagementApp.Contracts.Guards;
@@ -6,6 +7,7 @@ using StorageManagementApp.Mvc.Services.Interfaces;
 
 namespace StorageManagementApp.Mvc.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -21,26 +23,47 @@ namespace StorageManagementApp.Mvc.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(UserCreateDto user)
+        public async Task<ActionResult> Create(UserCreateDto user)
         {
-            _userService.CreateUser(user);
-            return View("Index");
+            var res = await _userService.CreateUser(user);
+            if (res)
+            {
+                return View("Index");
+            }else
+            {
+                user.ErrorMessage = "Registration failed.";
+                return View(user);
+            }
         }
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View(new UserLoginDto());
         }
+        [HttpGet]
+        public async Task<ActionResult> Logout()
+        {
+            var res = await _userService.Logout();
+            if (res)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else return View();
+        }
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(UserLoginDto userDTO)
+        public async Task<ActionResult> Login(UserLoginDto userDTO)
         {
             try
             {
-                var result = _userService.Login(userDTO);
+                var result = await _userService.Login(userDTO);
                 if (result)
                 {
+                    var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
                     return RedirectToAction(nameof(Index));
                 }
                 else {
@@ -53,16 +76,12 @@ namespace StorageManagementApp.Mvc.Controllers
                 return View();
             }
         }
-
-        [PrivateGuard]
         public ActionResult Index()
         {
             var productsDtos = _productService.GetProducts();
             if (productsDtos != null)
-                return View(productsDtos);
+                return View(productsDtos.Data);
             return View();
         }
-
-
     }
 }

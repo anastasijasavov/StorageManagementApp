@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StorageManagementApp.Contracts.DTOs.Product;
 using StorageManagementApp.Mvc.Services.Interfaces;
 
 namespace StorageManagementApp.Mvc.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;

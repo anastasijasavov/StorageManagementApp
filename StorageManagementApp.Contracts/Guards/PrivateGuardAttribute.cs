@@ -13,13 +13,14 @@ namespace StorageManagementApp.Contracts.Guards
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!(context.HttpContext.User?.Identity?.IsAuthenticated ?? false))
+            if (!context.HttpContext.User?.Identity?.IsAuthenticated ?? false)
             {
                 context.Result = new RedirectToRouteResult(
                     new RouteValueDictionary(
                         new { controller = "User", action = "Login" })
                     );
-            }else
+            }
+            else
             {
                 context.Result = new RedirectToRouteResult(
                     new RouteValueDictionary(

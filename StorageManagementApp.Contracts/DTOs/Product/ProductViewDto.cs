@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StorageManagementApp.Contracts.DTOs.Product
 {
-    public class ProductViewDto
+    public class ProductViewDto : ResponseTemplateDto<ProductViewDto>
     {
         public int Id { get; set; }
         public string Description { get; set; }

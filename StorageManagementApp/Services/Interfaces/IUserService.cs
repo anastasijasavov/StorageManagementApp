@@ -5,10 +5,10 @@ namespace StorageManagementApp.Mvc.Services.Interfaces
 {
     public interface IUserService
     {
-        string HashPassword(string password);
-        PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string providedPassword);
-        bool CreateUser(UserCreateDto user);
-        bool Login(UserLoginDto user);
-        bool Delete(int id);
+        Task<bool> CreateUser(UserCreateDto user);
+        Task<bool> Login(UserLoginDto user);
+        Task<bool> Delete(string email);
+        Task<bool> Logout();
+        Task<bool> UpdateUser(UserCreateDto dto);
     }
 }

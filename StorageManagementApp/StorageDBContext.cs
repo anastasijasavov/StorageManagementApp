@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using StorageManagementApp.Models;
+using System.Reflection.Emit;
 
 namespace StorageManagementApp
 {
@@ -29,22 +31,7 @@ namespace StorageManagementApp
 
             builder.Entity<Product>()
                 .HasKey(x => x.Id);
-            //seed
-            builder.Entity<User>().ToTable("Users").HasData(
-                new List<User>
-                {
-                    new User
-                    {
-                        Id = 1,
-                        Email = "anastasija.savov2000@gmail.com",
-                        Password = "anastasija123",
-                        NormalizedUserName = "ANASTASIJA.SAVOV2000@GMAIL.COM",
-                        UserName = "anastasija",
-                        PasswordHash = "$2a$12$y6USyih2RFHFv6GEWgjUt.PA8DxUbPD.BLqe7w9/A3oW.tLt0yDWq"
-                    }
-                }
-            );
-
+           
             builder.Entity<Category>().ToTable("Categories").HasData(
                 new List<Category>
                 {
@@ -52,7 +39,7 @@ namespace StorageManagementApp
                     new Category { Id = 2, Name = "Office materials" },
                     new Category { Id = 3, Name = "Tools" }
                 });
-
+            builder.Entity<IdentityUserClaim<string>>().HasKey(p => new { p.Id });
             builder.Entity<Product>().ToTable("Products");
         }
     }
