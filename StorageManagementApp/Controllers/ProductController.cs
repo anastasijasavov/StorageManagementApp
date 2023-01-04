@@ -64,5 +64,24 @@ namespace StorageManagementApp.Mvc.Controllers
             _productService.DeleteProduct(id);
             return RedirectToAction("Index", "User");
         }
+
+        [HttpPost]
+        public List<ProductViewDto> Search(string code, string name, string category)
+        {
+            ProductQuery query = new();
+
+            if (!String.IsNullOrEmpty(code))
+            {
+                query.Code = code;
+            }
+            else
+            {
+                query.CategoryId = Int32.Parse(category);
+                query.Name = name;
+            }
+            var products = this._productService.SearchProducts(query);
+            
+            return products.Data ?? new List<ProductViewDto>();
+        }
     }
 }

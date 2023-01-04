@@ -82,5 +82,12 @@ namespace StorageManagementApp.Mvc.Controllers
                 return View(productsDtos.Data);
             return View();
         }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult Index(List<ProductViewDto> products)
+        {
+            return View(products);
+        }
     }
 }

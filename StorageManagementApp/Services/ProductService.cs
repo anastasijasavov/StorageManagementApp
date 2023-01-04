@@ -84,7 +84,8 @@ namespace StorageManagementApp.Mvc.Services
                 query.Name == null || x.Name == query.Name &&
                 query.Code == null || x.Code == query.Code &&
                 query.CategoryId == null || x.CategoryId == query.CategoryId
-                );
+                ).Include(x => x.Category);
+
             List<ProductViewDto> productDtos = _mapper.Map<List<ProductViewDto>>(products);
             return new ResponseTemplateDto<List<ProductViewDto>>
             {

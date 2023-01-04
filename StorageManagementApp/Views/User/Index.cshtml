@@ -1,12 +1,58 @@
-﻿@model IEnumerable<StorageManagementApp.Contracts.DTOs.Product.ProductViewDto>
-
+﻿@using StorageManagementApp.Contracts.Enums;
+@model IEnumerable<StorageManagementApp.Contracts.DTOs.Product.ProductViewDto>
 @{
     ViewData["Title"] = "Search Products";
     Layout = "~/Views/Shared/_LoggedLayout.cshtml";
 }
 
 @Html.ActionLink("Add product", "Create", "Product")
-<table class="table">
+    <script>
+        function setFilters() {
+
+            var code = document.getElementById("codeInput").value;
+            var name = document.getElementById("nameInput").value;
+            var category = document.getElementById("dropdown").value;
+            var data = {
+                code: code,
+                name: name,
+                category: category
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Product/Search",
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                    $("#table tbody tr").remove();
+                    for (var i = 0; i < response.length; i++) {
+                        var row = "<tr>";
+                        row += "<td>" + response[i].description + "</td>";
+                        row += "<td>" + response[i].name + "</td>";
+                        row += "<td>" + response[i].purchasePrice + "</td>";
+                        row += "<td>" + response[i].retailPrice + "</td>";
+                        row += "<td>" + response[i].code + "</td>";
+                        row += "<td>" + response[i].inStock + "</td>";
+                        row += "<td>" + response[i].categoryName + "</td>";
+                        row += "<td>" + response[i].imagePath + "</td>";
+                        row += "</tr>";
+                        $("#table tbody").append(row);
+                    }
+                }
+            })
+        }
+    </script>
+
+<div class="form-group">
+    <label>Select category</label>
+    <select id="dropdown" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
+</div>
+
+<input type="text" id="nameInput" placeholder="Name" />
+<input type="text" id="codeInput" placeholder="Code" />
+<button onclick="setFilters()"> Search</button>
+
+<table id="table" class="table">
     <thead>
         <tr>
             <th>
@@ -68,7 +114,7 @@
                     </td>
                     <td>
                         <a asp-action="Edit" asp-controller="Product" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="ShowConfirmDialog" asp-controller="Product" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="ShowConfirmDialog" asp-controller="User" asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }
