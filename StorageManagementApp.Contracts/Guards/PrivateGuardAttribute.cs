@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using StorageManagementApp.Contracts.DTOs.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace StorageManagementApp.Contracts.Guards
             {
                 context.Result = new RedirectToRouteResult(
                     new RouteValueDictionary(
-                        new { controller = "User", action = "Index" })
+                        new { controller = "Product", action = "Index"})
                     );
             }
         }

@@ -15,6 +15,27 @@ namespace StorageManagementApp.Mvc.Controllers
             _productService = productService;
         }
 
+        public ActionResult Index()
+        {
+            var productsDtos = _productService.GetProducts();
+            if (productsDtos?.Data != null)
+            {
+                var productVm = new ProductVM
+                {
+                    Products = productsDtos.Data,
+                    Query = new()
+                };
+                return View(productVm);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(ProductVM products)
+        {
+            return View(products);
+        }
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -27,7 +48,7 @@ namespace StorageManagementApp.Mvc.Controllers
             var res = _productService.AddProduct(product);
 
             //reload page to update the list
-            if (res) return RedirectToAction("Index", "User");
+            if (res) return RedirectToAction("Index", "Product");
             else
             {
                 product.ErrorMessage = "Error adding the product. Try again.";
@@ -48,7 +69,7 @@ namespace StorageManagementApp.Mvc.Controllers
             var result = _productService.UpdateProduct(dto);
             if (result)
             {
-                return RedirectToAction("Index", "User");
+                return RedirectToAction("Index", "Product");
             }
             else return View(dto);
         }
@@ -58,30 +79,25 @@ namespace StorageManagementApp.Mvc.Controllers
         {
             return PartialView("ConfirmDialog", new IdDto { Id = id});
         }
-        [HttpDelete]
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             _productService.DeleteProduct(id);
-            return RedirectToAction("Index", "User");
+            return RedirectToAction("Index", "Product");
         }
 
-        [HttpPost]
-        public List<ProductViewDto> Search(string code, string name, string category)
+        [HttpGet]
+        public ActionResult Search(ProductQuery query)
         {
-            ProductQuery query = new();
 
-            if (!String.IsNullOrEmpty(code))
-            {
-                query.Code = code;
-            }
-            else
-            {
-                query.CategoryId = Int32.Parse(category);
-                query.Name = name;
-            }
             var products = this._productService.SearchProducts(query);
-            
-            return products.Data ?? new List<ProductViewDto>();
+
+            ProductVM productVM = new() {
+                Query = query,
+                Products = products.Data
+            };
+
+            return View("Index", productVM);
         }
     }
 }

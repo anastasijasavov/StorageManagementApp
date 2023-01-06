@@ -81,9 +81,10 @@ namespace StorageManagementApp.Mvc.Services
         public ResponseTemplateDto<List<ProductViewDto>> SearchProducts(ProductQuery query)
         {
             var products = _ctx.Products.Where(x =>
-                query.Name == null || x.Name == query.Name &&
-                query.Code == null || x.Code == query.Code &&
-                query.CategoryId == null || x.CategoryId == query.CategoryId
+                (query.Code == null && (
+                    (query.Name == null || x.Name == query.Name) &&
+                    (query.CategoryId == null || x.CategoryId == query.CategoryId))
+                || x.Code == query.Code)
                 ).Include(x => x.Category);
 
             List<ProductViewDto> productDtos = _mapper.Map<List<ProductViewDto>>(products);
@@ -103,7 +104,7 @@ namespace StorageManagementApp.Mvc.Services
             {
                 var updateProduct = _mapper.Map<Product>(product);
                 _ctx.Entry(dbProduct).CurrentValues.SetValues(updateProduct);
-                
+
                 _ctx.SaveChanges();
                 return true;
             }

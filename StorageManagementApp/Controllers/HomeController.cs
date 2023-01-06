@@ -19,7 +19,7 @@ namespace StorageManagementApp.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "User");
+                return RedirectToAction("Index", "Product");
             }
             return View();
         }

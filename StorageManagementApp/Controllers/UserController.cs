@@ -29,7 +29,7 @@ namespace StorageManagementApp.Mvc.Controllers
             var res = await _userService.CreateUser(user);
             if (res)
             {
-                return View("Index");
+                return RedirectToAction("Index", "Product", new ProductVM());
             }else
             {
                 user.ErrorMessage = "Registration failed.";
@@ -62,7 +62,7 @@ namespace StorageManagementApp.Mvc.Controllers
                 if (result)
                 {
                     var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "Product");
                 }
                 else {
                     userDTO.ErrorMessage = "Wrong email and/or password. Try again.";
@@ -74,20 +74,6 @@ namespace StorageManagementApp.Mvc.Controllers
                 return View();
             }
         }
-        [Authorize]
-        public ActionResult Index()
-        {
-            var productsDtos = _productService.GetProducts();
-            if (productsDtos != null)
-                return View(productsDtos.Data);
-            return View();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public ActionResult Index(List<ProductViewDto> products)
-        {
-            return View(products);
-        }
+       
     }
 }
