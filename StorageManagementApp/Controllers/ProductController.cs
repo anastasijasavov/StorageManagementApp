@@ -43,9 +43,9 @@ namespace StorageManagementApp.Mvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(ProductDto product)
+        public async Task<ActionResult> Create(ProductDto product)
         {
-            var res = _productService.AddProduct(product);
+            var res = await _productService.AddProduct(product);
 
             //reload page to update the list
             if (res) return RedirectToAction("Index", "Product");
@@ -55,18 +55,27 @@ namespace StorageManagementApp.Mvc.Controllers
                 return View(product); //with error message
             }
         }
-
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public async Task<ActionResult> Edit(int id)
         {
-            var productDto = _productService.GetProductById(id);
+            var productDto = await _productService.GetProductById(id);
             return View(productDto);
         }
 
         [HttpPost]
-        public ActionResult Edit(ProductDto dto)
+        public async Task<ActionResult> Edit(ProductDto dto)
         {
+            var contentType = dto.File?.ContentType;
 
-            var result = _productService.UpdateProduct(dto);
+            var isAllowedType = contentType != null && (contentType.Contains("jpeg") || 
+                                contentType.Contains("jpg") || 
+                                contentType.Contains("png"));
+            if (!isAllowedType)
+            {
+                dto.ErrorMessage = "This file type is not allowed.";
+                return View(dto);
+            } 
+            var result = await _productService.UpdateProduct(dto);
             if (result)
             {
                 return RedirectToAction("Index", "Product");

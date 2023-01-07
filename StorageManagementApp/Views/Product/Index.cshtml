@@ -5,50 +5,8 @@
     ViewData["Title"] = "Search Products";
     Layout = "~/Views/Shared/_LoggedLayout.cshtml";
 }
-@*<script>
-    function setFilters() {
-
-        var code = document.getElementById("codeInput").value;
-        var name = document.getElementById("nameInput").value;
-        var category = document.getElementById("dropdown").value;
-        var data = {
-            code: code,
-            name: name,
-            category: category
-        }
-
-        $.ajax({
-            type: "POST",
-            url: "/Product/Search",
-            data: data,
-            success: function (response) {
-                console.log(response);
-                $("#table tbody tr").remove();
-                for (var i = 0; i < response.length; i++) {
-                    var row = "<tr>";
-                    row += "<td>" + response[i].description + "</td>";
-                    row += "<td>" + response[i].name + "</td>";
-                    row += "<td>" + response[i].purchasePrice + "</td>";
-                    row += "<td>" + response[i].retailPrice + "</td>";
-                    row += "<td>" + response[i].code + "</td>";
-                    row += "<td>" + response[i].inStock + "</td>";
-                    row += "<td>" + response[i].categoryName + "</td>";
-                    row += "<td>" + response[i].imagePath + "</td>";
-                    row += "<td> <a href='/Product/Edit/" + response[i].id + "'>Edit</a> |";
-                    row += "<a href='/User/ShowConfirmDialog/" + response[i].id + "' data-target='#modal'>Delete</a> </td>";
-                    row += "</tr>";
-                    $("#table tbody").append(row);
-                }
-            }
-        })
-    }
-
-    function deleteProduct(id){
-        
-    }
-</script>*@
 @Html.ActionLink("Add product", "Create", "Product")
-    
+
 
 <form class="d-inline" asp-action="Search" asp-controller="Product" method="get">
 
@@ -58,18 +16,16 @@
         <select id="dropdown" asp-for="@Model.Query.CategoryId" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
     </div>
 
-    @Html.TextBoxFor(item => @Model.Query.Name, new { @class = "form-control w-25"})
-    @Html.TextBoxFor(item => @Model.Query.Code, new { @class = "form-control w-25"})
+    @Html.TextBoxFor(item => @Model.Query.Name, new { @class = "form-control w-25", @placeholder = "Name..."})
+    @Html.TextBoxFor(item => @Model.Query.Code, new { @class = "form-control w-25", @placeholder = "Code..."})
 
     <button type="submit">Search</button>
 
-@*@Html.ActionLink("Search", "Search", "Product", Model.Query)*@
 
 </form>
+
 <button>Clear filter</button>
-@*<input type="text" id="nameInput" placeholder="Name" />*@
-@*<input type="text" id="codeInput" placeholder="Code" />*@
-@*<a asp-action="Search" asp-controller="Product" asp> Search</a>*@
+
 <table id="table" class="table">
     <thead>
         <tr>
@@ -128,11 +84,11 @@
                         @Html.DisplayFor(modelItem => item.CategoryName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ImagePath)
+                        <img width="50" height="50" src="@item.ImagePath">
                     </td>
                     <td>
                         <a asp-action="Edit" asp-controller="Product" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="ShowConfirmDialog" data-target="#modal" asp-controller="Product"  asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="ShowConfirmDialog" data-target="#modal" asp-controller="Product" asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }

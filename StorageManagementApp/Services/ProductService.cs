@@ -13,16 +13,23 @@ namespace StorageManagementApp.Mvc.Services
         private readonly StorageDBContext _ctx;
         private readonly IMapper _mapper;
         private readonly ILogger<ProductService> _logger;
-        public ProductService(StorageDBContext ctx, IMapper mapper, ILogger<ProductService> logger)
+        private readonly IWebHostEnvironment _webHostEnvironemnt;
+        public ProductService(StorageDBContext ctx, IMapper mapper, ILogger<ProductService> logger, IWebHostEnvironment webHostEnvironemnt)
         {
             _ctx = ctx;
             _mapper = mapper;
             _logger = logger;
+            _webHostEnvironemnt = webHostEnvironemnt;
         }
-        public bool AddProduct(ProductDto product)
+        public async Task<bool> AddProduct(ProductDto product)
         {
 
             Product dbProduct = _mapper.Map<Product>(product);
+
+            if(product.File != null)
+            {
+                dbProduct.ImagePath = await UploadFile(product.File);
+            }
             _ctx.Products.Add(dbProduct);
 
             ////generate code
@@ -34,23 +41,23 @@ namespace StorageManagementApp.Mvc.Services
 
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
-            var product = _ctx.Products.Where(x => x.Id == id).FirstOrDefault();
+            var product = await _ctx.Products.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (product != null)
             {
-                _ctx.Products.Remove(product);
-                _ctx.SaveChanges();
+                 _ctx.Products.Remove(product);
+                await _ctx.SaveChangesAsync();
                 return true;
             }
             return false;
         }
 
-        public ProductDto GetProductById(int id)
+        public async Task<ProductDto> GetProductById(int id)
         {
-            var product = _ctx.Products.Where(x => x.Id == id)
+            var product = await _ctx.Products.Where(x => x.Id == id)
                 .AsNoTracking()
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
             return _mapper.Map<ProductDto>(product);
         }
 
@@ -96,7 +103,7 @@ namespace StorageManagementApp.Mvc.Services
 
         }
 
-        public bool UpdateProduct(ProductDto product)
+        public async Task<bool> UpdateProduct(ProductDto product)
         {
 
             var dbProduct = _ctx.Products.FirstOrDefault(x => x.Id == product.Id);
@@ -104,14 +111,34 @@ namespace StorageManagementApp.Mvc.Services
             {
                 var updateProduct = _mapper.Map<Product>(product);
                 _ctx.Entry(dbProduct).CurrentValues.SetValues(updateProduct);
+                updateProduct.ImagePath = await UploadFile(product.File);
 
-                _ctx.SaveChanges();
+                await _ctx.SaveChangesAsync();
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+        public async Task<string> UploadFile(IFormFile file)
+        {
+            var wwwRoot = _webHostEnvironemnt.WebRootPath;
+            var uploadsDirectoryName = "images";
+            var uploadsDirectory = Path.Combine(wwwRoot, uploadsDirectoryName);
+
+            if (!Directory.Exists(uploadsDirectory))
+            {
+                Directory.CreateDirectory(uploadsDirectory);
+            }
+
+            var uniqueName = Guid.NewGuid().ToString();
+            var newFile = uniqueName + Path.GetExtension(file.FileName);
+            var fileUploadPath = Path.Combine(uploadsDirectory, newFile);
+
+            using FileStream fs = new FileStream(fileUploadPath, FileMode.Create, FileAccess.Write);
+            await file.CopyToAsync(fs);
+            return Path.Combine(uploadsDirectoryName, newFile);
         }
     }
 }
