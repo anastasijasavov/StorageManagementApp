@@ -26,7 +26,7 @@ namespace StorageManagementApp.Mvc.Services
 
             Product dbProduct = _mapper.Map<Product>(product);
 
-            if(product.File != null)
+            if (product.File != null)
             {
                 dbProduct.ImagePath = await UploadFile(product.File);
             }
@@ -41,13 +41,13 @@ namespace StorageManagementApp.Mvc.Services
 
         }
 
-        public async Task<bool> DeleteProduct(int id)
+        public bool DeleteProduct(int id)
         {
-            var product = await _ctx.Products.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var product = _ctx.Products.Where(x => x.Id == id).FirstOrDefault();
             if (product != null)
             {
-                 _ctx.Products.Remove(product);
-                await _ctx.SaveChangesAsync();
+                _ctx.Products.Remove(product);
+                _ctx.SaveChanges();
                 return true;
             }
             return false;
@@ -90,7 +90,9 @@ namespace StorageManagementApp.Mvc.Services
             var products = _ctx.Products.Where(x =>
                 (query.Code == null && (
                     (query.Name == null || x.Name == query.Name) &&
-                    (query.CategoryId == null || x.CategoryId == query.CategoryId))
+                    (query.CategoryId == null ||
+                     query.CategoryId == 0 ||
+                     x.CategoryId == query.CategoryId))
                 || x.Code == query.Code)
                 ).Include(x => x.Category);
 
@@ -111,7 +113,7 @@ namespace StorageManagementApp.Mvc.Services
             {
                 var updateProduct = _mapper.Map<Product>(product);
                 _ctx.Entry(dbProduct).CurrentValues.SetValues(updateProduct);
-                updateProduct.ImagePath = await UploadFile(product.File);
+                dbProduct.ImagePath = await UploadFile(product.File);
 
                 await _ctx.SaveChangesAsync();
                 return true;
@@ -121,8 +123,10 @@ namespace StorageManagementApp.Mvc.Services
                 return false;
             }
         }
-        public async Task<string> UploadFile(IFormFile file)
+        public async Task<string> UploadFile(IFormFile? file)
         {
+            if (file == null) return "";
+
             var wwwRoot = _webHostEnvironemnt.WebRootPath;
             var uploadsDirectoryName = "images";
             var uploadsDirectory = Path.Combine(wwwRoot, uploadsDirectoryName);

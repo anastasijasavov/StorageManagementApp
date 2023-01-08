@@ -12,4 +12,11 @@ namespace StorageManagementApp.Contracts.Enums
         OfficeMaterials = 2,
         Tools = 3
     }
+    public enum FilterCategoryEnum
+    {
+        All = 0,
+        Food = 1,
+        OfficeMaterials = 2,
+        Tools = 3
+    }
 }

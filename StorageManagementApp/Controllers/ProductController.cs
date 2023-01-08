@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StorageManagementApp.Contracts.DTOs;
 using StorageManagementApp.Contracts.DTOs.Product;
@@ -45,6 +46,13 @@ namespace StorageManagementApp.Mvc.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductDto product)
         {
+            string? contentType = product.File?.ContentType;
+
+            if (contentType != null && !IsAllowedContentType(contentType))
+            {
+                product.ErrorMessage = "This file type is not allowed.";
+                return View(product);
+            }
             var res = await _productService.AddProduct(product);
 
             //reload page to update the list
@@ -65,16 +73,13 @@ namespace StorageManagementApp.Mvc.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(ProductDto dto)
         {
-            var contentType = dto.File?.ContentType;
+            string? contentType = dto.File?.ContentType;
 
-            var isAllowedType = contentType != null && (contentType.Contains("jpeg") || 
-                                contentType.Contains("jpg") || 
-                                contentType.Contains("png"));
-            if (!isAllowedType)
+            if (contentType != null && !IsAllowedContentType(contentType))
             {
                 dto.ErrorMessage = "This file type is not allowed.";
                 return View(dto);
-            } 
+            }
             var result = await _productService.UpdateProduct(dto);
             if (result)
             {
@@ -83,10 +88,18 @@ namespace StorageManagementApp.Mvc.Controllers
             else return View(dto);
         }
 
+        private bool IsAllowedContentType(string contentType)
+        {
+            var isAllowedType = contentType != null && (contentType.Contains("jpeg") ||
+                                contentType.Contains("jpg") ||
+                                contentType.Contains("png"));
+            return isAllowedType;
+        }
+
         [HttpGet]
         public ActionResult ShowConfirmDialog(int id)
         {
-            return PartialView("ConfirmDialog", new IdDto { Id = id});
+            return PartialView("ConfirmDialog", new IdDto { Id = id });
         }
         [HttpGet]
         public ActionResult Delete(int id)
@@ -96,17 +109,18 @@ namespace StorageManagementApp.Mvc.Controllers
         }
 
         [HttpGet]
-        public ActionResult Search(ProductQuery query)
+        public ActionResult Index(ProductQuery query)
         {
 
             var products = this._productService.SearchProducts(query);
 
-            ProductVM productVM = new() {
+            ProductVM productVM = new()
+            {
                 Query = query,
                 Products = products.Data
             };
 
-            return View("Index", productVM);
+            return View(productVM);
         }
     }
 }

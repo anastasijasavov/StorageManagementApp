@@ -8,12 +8,13 @@
 @Html.ActionLink("Add product", "Create", "Product")
 
 
-<form class="d-inline" asp-action="Search" asp-controller="Product" method="get">
+<form class="d-inline" asp-action="Index" asp-controller="Product" method="get">
 
 
     <div class="form-group w-25">
         <label>Select category</label>
-        <select id="dropdown" asp-for="@Model.Query.CategoryId" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
+        <select id="dropdown" asp-for="@Model.Query.CategoryId"
+            asp-items="Html.GetEnumSelectList<FilterCategoryEnum>()"></select>
     </div>
 
     @Html.TextBoxFor(item => @Model.Query.Name, new { @class = "form-control w-25", @placeholder = "Name..."})
@@ -30,10 +31,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayName("Description")
+                @Html.DisplayName("Name")
             </th>
             <th>
-                @Html.DisplayName("Name")
+                @Html.DisplayName("Description")
             </th>
             <th>
                 @Html.DisplayName("Purchase price")
@@ -63,10 +64,10 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Description)
+                        @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.PurchasePrice)
@@ -84,11 +85,12 @@
                         @Html.DisplayFor(modelItem => item.CategoryName)
                     </td>
                     <td>
-                        <img width="50" height="50" src="@item.ImagePath">
+                        <img height="50" src=@item.ImagePath>
                     </td>
                     <td>
                         <a asp-action="Edit" asp-controller="Product" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="ShowConfirmDialog" data-target="#modal" asp-controller="Product" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="ShowConfirmDialog" data-target="#modal" asp-controller="Product"
+                    asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }
@@ -106,5 +108,3 @@
 <br />
 Page @(Model.Query.PageCount < Model.Query.PageNumber ? 0 : Model.Query.PageNumber) of @Model.Query.PageCount
 @*@Html.PagedListPager(Model, page => Url.Action("Index"))*@
-
-
