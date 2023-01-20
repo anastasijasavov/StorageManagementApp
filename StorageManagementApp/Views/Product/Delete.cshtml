@@ -1,61 +1,56 @@
-@using StorageManagementApp.Contracts.Enums
+﻿@using StorageManagementApp.Contracts.Enums
 @model StorageManagementApp.Contracts.DTOs.Product.ProductDto
 
 @{
-    ViewData["Title"] = "Edit product";
+    ViewData["Title"] = "Delete product";
 }
 <hr />
+<h1>Are you sure you want to delete this product?</h1>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Delete" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Name</label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control" readonly/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RetailPrice" class="control-label">Retail price</label>
-                <input asp-for="RetailPrice" type="number" class="form-control" />
+                <input asp-for="RetailPrice" type="number" class="form-control"readonly />
                 <span asp-validation-for="RetailPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="InStock" class="control-label">In stock</label>
-                <input asp-for="InStock" type="number" class="form-control" />
+                <input asp-for="InStock" type="number" class="form-control" readonly/>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label">Decription</label>
-                <textarea asp-for="Description" class="form-control" placeholder="Description..."></textarea>
+                <textarea asp-for="Description" class="form-control" placeholder="Description" readonly></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PurchasePrice" class="control-label">Purchase price</label>
-                <input asp-for="PurchasePrice" type="number" class="form-control" />
+                <input asp-for="PurchasePrice" type="number" class="form-control" readonly/>
                 <span asp-validation-for="PurchasePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId">Category</label>
-                <select asp-for="CategoryId" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
+                <select asp-for="CategoryId" asp-items="Html.GetEnumSelectList<CategoryEnum>()" readonly></select>
             </div>
             <div class="form-group">
                 <label asp-for="Code" class="control-label">Code</label>
-                <input asp-for="Code" type="text" class="form-control" />
+                <input asp-for="Code" type="text" class="form-control" readonly/>
                 <span asp-validation-for="Code" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="File" class="control-label">Upload file</label>
-                <input asp-for="File" type="file" class="form-control" />
-            </div>
-            <div class="form-group">
-                <input type="submit" asp-action="Edit" value="Edit" class="btn btn-primary" />
-            </div>
-            @Html.HiddenFor(x => x.ImagePath)
-            <img src="../../@Model.ImagePath" height="200"/>
+           <img src="../../@Model.ImagePath" height="200"/> 
+           
         </form>
-        @if (Model.ErrorMessage != null)
-        {
-            <span class="text-danger">@Model.ErrorMessage</span>
-        }
+    </div>
+
+    <div class="modal-footer">
+        <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@Model.Id">Delete</a>
+        <a asp-action="Index" asp-controller="Product" data-bs-dismiss="modal">Cancel</a>
     </div>
 </div>
 

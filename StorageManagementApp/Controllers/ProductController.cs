@@ -1,9 +1,11 @@
 ﻿using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PagedList.Core;
 using StorageManagementApp.Contracts.DTOs;
-using StorageManagementApp.Contracts.DTOs.Product;
+using StorageManagementApp.Mvc.ViewModels;
 using StorageManagementApp.Mvc.Services.Interfaces;
+using StorageManagementApp.Contracts.DTOs.Product;
 
 namespace StorageManagementApp.Mvc.Controllers
 {
@@ -19,13 +21,15 @@ namespace StorageManagementApp.Mvc.Controllers
         public ActionResult Index()
         {
             var productsDtos = _productService.GetProducts();
+            var pagedList = productsDtos.Data.AsQueryable().ToPagedList(1, 10);
             if (productsDtos?.Data != null)
             {
                 var productVm = new ProductVM
                 {
-                    Products = productsDtos.Data,
+                    Products = pagedList,
                     Query = new()
                 };
+                
                 return View(productVm);
             }
             return View();
@@ -97,19 +101,26 @@ namespace StorageManagementApp.Mvc.Controllers
         }
 
         [HttpGet]
-        public ActionResult ShowConfirmDialog(int id)
+        public async Task<ActionResult> ShowConfirmDialog(int id)
         {
-            return PartialView("ConfirmDialog", new IdDto { Id = id });
+            var product = await _productService.GetProductById(id);
+            return View("Delete", product);
         }
         [HttpGet]
-        public ActionResult Delete(int id)
+        public ActionResult DeleteProduct(int id)
         {
             _productService.DeleteProduct(id);
             return RedirectToAction("Index", "Product");
         }
 
+        //[HttpGet]
+        //public ActionResult Delete(ProductDto product)
+        //{
+        //    return View(product);
+        //}
+
         [HttpGet]
-        public ActionResult Index(ProductQuery query)
+        public ActionResult Index(ProductQuery query, int page = 1)
         {
 
             var products = this._productService.SearchProducts(query);
@@ -117,7 +128,7 @@ namespace StorageManagementApp.Mvc.Controllers
             ProductVM productVM = new()
             {
                 Query = query,
-                Products = products.Data
+                Products = products.Data.AsQueryable().ToPagedList(page, query.PageSize)
             };
 
             return View(productVM);

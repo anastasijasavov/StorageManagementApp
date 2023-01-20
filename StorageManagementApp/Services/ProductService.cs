@@ -89,7 +89,7 @@ namespace StorageManagementApp.Mvc.Services
         {
             var products = _ctx.Products.Where(x =>
                 (query.Code == null && (
-                    (query.Name == null || x.Name == query.Name) &&
+                    (query.Name == null || x.Name.Contains(query.Name)) &&
                     (query.CategoryId == null ||
                      query.CategoryId == 0 ||
                      x.CategoryId == query.CategoryId))
@@ -113,7 +113,10 @@ namespace StorageManagementApp.Mvc.Services
             {
                 var updateProduct = _mapper.Map<Product>(product);
                 _ctx.Entry(dbProduct).CurrentValues.SetValues(updateProduct);
-                dbProduct.ImagePath = await UploadFile(product.File);
+                if(product.File != null)
+                {
+                    dbProduct.ImagePath = await UploadFile(product.File);
+                }
 
                 await _ctx.SaveChangesAsync();
                 return true;

@@ -1,6 +1,7 @@
 ﻿@using StorageManagementApp.Contracts.DTOs.Product;
 @using StorageManagementApp.Contracts.Enums;
-@model StorageManagementApp.Contracts.DTOs.Product.ProductVM
+@using System.Web;
+@model StorageManagementApp.Mvc.ViewModels.ProductVM
 @{
     ViewData["Title"] = "Search Products";
     Layout = "~/Views/Shared/_LoggedLayout.cshtml";
@@ -24,8 +25,6 @@
 
 
 </form>
-
-<button>Clear filter</button>
 
 <table id="table" class="table">
     <thead>
@@ -106,5 +105,5 @@
     </tbody>
 </table>
 <br />
-Page @(Model.Query.PageCount < Model.Query.PageNumber ? 0 : Model.Query.PageNumber) of @Model.Query.PageCount
-@*@Html.PagedListPager(Model, page => Url.Action("Index"))*@
+<pager class="pager-container" list="@Model.Products"  asp-action="Index" asp-controller="Product" />
+
