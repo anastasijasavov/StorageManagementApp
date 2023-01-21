@@ -127,6 +127,10 @@ namespace StorageManagementApp.Mvc.Controllers
         public ActionResult DeleteProduct(int id)
         {
             _productService.DeleteProduct(id);
+            if (_cache.TryGetValue(queryCacheString, out ProductQuery query))
+            {
+                return RedirectToAction("Index", this.GetRouteFromQuery(query));
+            }
             return RedirectToAction("Index", "Product");
         }
 

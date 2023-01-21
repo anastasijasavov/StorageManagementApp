@@ -19,6 +19,10 @@ namespace StorageManagementApp.Mvc.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Product");
+            }
             return View();
         }
 
@@ -46,6 +50,10 @@ namespace StorageManagementApp.Mvc.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Product");
+            }
             return View(new UserLoginDto());
         }
         [HttpGet]
