@@ -6,6 +6,7 @@ using StorageManagementApp.Contracts.DTOs;
 using StorageManagementApp.Mvc.ViewModels;
 using StorageManagementApp.Mvc.Services.Interfaces;
 using StorageManagementApp.Contracts.DTOs.Product;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace StorageManagementApp.Mvc.Controllers
 {
@@ -13,11 +14,13 @@ namespace StorageManagementApp.Mvc.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private const string queryCacheString = "query";
+        private IMemoryCache _cache;
+        public ProductController(IProductService productService, IMemoryCache cache)
         {
             _productService = productService;
+            _cache = cache;
         }
-
         public ActionResult Index()
         {
             var productsDtos = _productService.GetProducts();
@@ -29,8 +32,8 @@ namespace StorageManagementApp.Mvc.Controllers
                     Products = pagedList,
                     Query = new()
                 };
-                
                 return View(productVm);
+               
             }
             return View();
         }
@@ -87,11 +90,25 @@ namespace StorageManagementApp.Mvc.Controllers
             var result = await _productService.UpdateProduct(dto);
             if (result)
             {
+                if (_cache.TryGetValue(queryCacheString, out ProductQuery query))
+                {
+                    return RedirectToAction("Index", this.GetRouteFromQuery(query));
+                }
                 return RedirectToAction("Index", "Product");
             }
             else return View(dto);
         }
 
+        private RouteValueDictionary GetRouteFromQuery(ProductQuery query)
+        {
+            return new RouteValueDictionary
+            {
+                { "Query.Name", query.Name },
+                { "Query.Code", query.Code },
+                { "Query.CategoryId", query.CategoryId },
+                { "page", 1 }
+            };
+        }
         private bool IsAllowedContentType(string contentType)
         {
             var isAllowedType = contentType != null && (contentType.Contains("jpeg") ||
@@ -113,12 +130,6 @@ namespace StorageManagementApp.Mvc.Controllers
             return RedirectToAction("Index", "Product");
         }
 
-        //[HttpGet]
-        //public ActionResult Delete(ProductDto product)
-        //{
-        //    return View(product);
-        //}
-
         [HttpGet]
         public ActionResult Index(ProductQuery query, int page = 1)
         {
@@ -130,7 +141,10 @@ namespace StorageManagementApp.Mvc.Controllers
                 Query = query,
                 Products = products.Data.AsQueryable().ToPagedList(page, query.PageSize)
             };
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                   .SetAbsoluteExpiration(TimeSpan.FromSeconds(600));
 
+            _cache.Set(queryCacheString, query, cacheEntryOptions);
             return View(productVM);
         }
     }
