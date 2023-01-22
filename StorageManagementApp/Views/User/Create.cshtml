@@ -37,6 +37,10 @@
                 <input type="submit" value="Sign up" class="btn btn-primary" />
             </div>
         </form>
+        @if (Model?.ErrorMessage != null)
+        {
+            <span class="text-danger">@Model.ErrorMessage</span>
+        }
     </div>
 </div>
 

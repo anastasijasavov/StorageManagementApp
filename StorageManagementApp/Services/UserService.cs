@@ -45,6 +45,7 @@ namespace StorageManagementApp.Mvc.Services
             }
             else
             {
+                user.ErrorMessage = result.Errors.First().Description;
                 return false;
             }
         }

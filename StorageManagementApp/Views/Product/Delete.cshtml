@@ -46,12 +46,12 @@
            <img src="../../@Model.ImagePath" height="200"/> 
            
         </form>
-    </div>
-
     <div class="modal-footer">
         <a asp-action="DeleteProduct" asp-controller="Product" asp-route-id="@Model.Id">Delete</a>
-        <a asp-action="Index" asp-controller="Product" data-bs-dismiss="modal">Cancel</a>
+        <a asp-action="Index" asp-controller="Product">Cancel</a>
     </div>
+    </div>
+
 </div>
 
 @section Scripts {

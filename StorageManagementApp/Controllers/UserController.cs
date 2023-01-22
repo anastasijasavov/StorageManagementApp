@@ -17,12 +17,9 @@ namespace StorageManagementApp.Mvc.Controllers
             _productService = productService;
         }
         [HttpGet]
+        [PrivateGuardAttribute]
         public ActionResult Create()
         {
-            if (User.Identity?.IsAuthenticated ?? false)
-            {
-                return RedirectToAction("Index", "Product");
-            }
             return View();
         }
 
@@ -31,7 +28,7 @@ namespace StorageManagementApp.Mvc.Controllers
         public async Task<ActionResult> Create(UserCreateDto user)
         {
             var res = await _userService.CreateUser(user);
-            if (res)
+                if (res)
             {
                 UserLoginDto login = new()
                 {
@@ -48,12 +45,9 @@ namespace StorageManagementApp.Mvc.Controllers
             }
         }
         [HttpGet]
+        [PrivateGuardAttribute]
         public ActionResult Login()
         {
-            if (User.Identity?.IsAuthenticated ?? false)
-            {
-                return RedirectToAction("Index", "Product");
-            }
             return View(new UserLoginDto());
         }
         [HttpGet]
@@ -76,7 +70,6 @@ namespace StorageManagementApp.Mvc.Controllers
                 var result = await _userService.Login(userDTO);
                 if (result)
                 {
-                    var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
                     return RedirectToAction("Index", "Product");
                 }
                 else
